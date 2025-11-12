@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(美味)미미군산 팝업스토어 | 사업 계획</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Stone Neutral, Teal Accent) -->
+    <!-- Application Structure Plan: 이 SPA는 방문자가 '미미군산' 프로젝트 제안서를 쉽게 탐색할 수 있도록 설계되었습니다. 상단 고정 탐색 바(홈, 사업 개요, 프로그램, 기대 효과)를 통해 사용자는 원하는 정보로 즉시 이동할 수 있습니다. '홈'은 프로젝트의 비전을 제시하고, '사업 개요'는 카드 레이아웃을 사용해 사업의 목적과 핵심 자원(미식, 관광, 인적)을 시각적으로 분류합니다. '프로그램' 섹션은 HTML/CSS와 JS를 활용한 대화형 다이어그램을 통해 6가지 핵심 체험 요소를 사용자가 클릭하며 탐색할 수 있게 하여, 단순한 목록보다 훨씬 능동적인 정보 습득을 유도합니다. '호떡굽기 체험존'은 사용자의 요청에 따라 2.0초~3.0초 타이밍 게임으로 기능이 업데이트되어, 가장 높은 수준의 상호작용을 제공합니다. 'OX퀴즈존은 4문제 퀴즈로 구현되었습니다. '기대 효과' 섹션에서는 Chart.js를 사용해 방문객 및 SNS 노출 목표치를 시각화하여, 텍스트보다 명확하게 목표를 전달합니다. 이 구조는 선형적인 보고서 형식을 탈피하여 사용자가 주도적으로 정보를 탐색하는 대화형 경험을 제공하기 위해 선택되었습니다. -->
+    <!-- Visualization & Content Choices: 
+        - [사업 목적]: (정보: 4가지 목적) -> (목표: 조직화) -> (방식: 4-그리드 카드) -> (상호작용: 없음) -> (근거: 4가지 핵심 목표를 명확히 구분하여 제시) -> (HTML/Tailwind)
+        - [연계 관광자원]: (정보: 미식, 관광, 인적 자원) -> (목표: 분류/정보) -> (방식: 3단 카드 레이아웃) -> (상호작용: 없음) -> (근거: 관련 자원을 세 가지 범주로 명확히 시각적 분류) -> (HTML/Tailwind, 유니코드 아이콘)
+        - [세부 프로그램]: (정보: 스탬프 투어 및 6개 체험존) -> (목표: 탐색/조직화) -> (방식: HTML/CSS 기반 대화형 순서도/다이어그램) -> (상호작용: 6개 프로그램 카드 클릭 시 하단에 상세 설명이 JS로 동적 표시. 특히 호떡존은 2.0초~3.0초 타이밍 게임으로 구현됨. **OX퀴즈존은 4문제 퀴즈로 구현됨**) -> (근거: 사용자가 능동적으로 각 프로그램을 클릭하며 탐색할 수 있어 참여도와 이해도 향상) -> (HTML/Tailwind + Vanilla JS)
+        - [목표 성과]: (정보: 방문객 10,000명, SNS 10,000회) -> (목표: 정보/비교) -> (방식: Chart.js 막대 차트) -> (상호작용: 툴팁 호버) -> (근거: 정량적 목표 수치를 즉각적이고 시각적으로 전달) -> (Chart.js/Canvas)
+        - [기타 텍스트]: (정보: 추진배경, 독창성, 지속가능성 등) -> (목표: 정보) -> (방식: 서식 있는 텍스트 블록) -> (상호작용: 없음) -> (근거: 서술형 정보 전달에 적합) -> (HTML/Tailwind)
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #fdfcfb; 
+            color: #333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        nav a {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        nav a:hover,
+        nav a.active {
+            color: #f0fdfa;
+            border-bottom-color: #f0fdfa;
+        }
+        .program-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .program-node:hover,
+        .program-node.active {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            background-color: #ccfbf1; 
+            border-color: #14b8a6;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <nav class="bg-teal-700 text-white p-4 fixed w-full top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">(美味)미미군산</h1>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="py-2">홈</a>
+                <a href="#overview" class="py-2">사업 개요</a>
+                <a href="#programs" class="py-2">세부 프로그램</a>
+                <a href="#impact" class="py-2">기대 효과</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden flex-col space-y-2 px-4 pt-2 pb-4">
+            <a href="#home" class="block py-2">홈</a>
+            <a href="#overview" class="block py-2">사업 개요</a>
+            <a href="#programs" class="block py-2">세부 프로그램</a>
+            <a href="#impact" class="block py-2">기대 효과</a>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <header id="home" class="bg-teal-600 text-white min-h-[50vh] flex items-center justify-center text-center p-10 pt-20">
+            <div class="container mx-auto">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4">(美味)미미군산 팝업스토어</h2>
+                <p class="text-2xl md:text-3xl font-medium mb-8">"추억의 시간 여행, 군산에서 떠나다"</p>
+                <p class="text-lg max-w-3xl mx-auto">
+                    본 프로젝트는 군산의 풍부한 미식 자원을 개별 점포 단위에서 벗어나, 맛과 이야기를 결합한 현지 체험형 팝업스토어로 재구성하는 사업 계획입니다. 이 대화형 요약 페이지를 통해 '미미군산' 프로젝트의 핵심 비전, 세부 프로그램, 그리고 기대 효과를 탐색해 보세요.
+                </p>
+            </div>
+        </header>
+
+        <section id="overview" class="py-20 px-4">
+            <div class="container mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-4 text-teal-800">왜 '미미군산'인가?</h3>
+                <p class="text-lg text-center max-w-3xl mx-auto mb-12">
+                    군산은 짬뽕, 불곱창, 이성당 단팥빵 등 독특한 미식자원을 보유하고 있지만, 이는 아직 체험형 관광 콘텐츠로 확장되지 못했습니다. '미미군산'은 이러한 군산의 맛과 감성을 관광객이 직접 느끼고 체험하는 도심형 미식관광 콘텐츠로 발전시키고자 합니다.
+                </p>
+
+                <h4 class="text-2xl font-bold text-center mb-8">핵심 사업 목적</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
+                        <h5 class="font-bold text-xl mb-2">체험형 관광 개발</h5>
+                        <p>군산의 대표 미식자원을 활용한 체험형 관광 프로그램을 개발합니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
+                        <h5 class="font-bold text-xl mb-2">지역경제 활성화</h5>
+                        <p>지역 상권 및 로컬 브랜드(이성당 등)와의 협업으로 상생을 도모합니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
+                        <h5 class="font-bold text-xl mb-2">체류형 문화 조성</h5>
+                        <p>시민과 관광객이 함께 즐기는 체류형 미식문화를 조성합니다.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-teal-500">
+                        <h5 class="font-bold text-xl mb-2">도시브랜드 확립</h5>
+                        <p>군산의 '맛'을 도시브랜드로 확립하여 도시 이미지를 제고합니다.</p>
+                    </div>
+                </div>
+
+                <h4 class="text-2xl font-bold text-center mb-8">핵심 연계 자원</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h5 class="font-bold text-xl mb-4 text-center">🍲 미식 자원</h5>
+                        <ul class="list-disc list-inside space-y-2 text-left mx-auto max-w-xs">
+                            <li>이성당 단팥빵</li>
+                            <li>군산 짬뽕</li>
+                            <li>불곱창</li>
+                            <li>간장게장</li>
+                            <li>호떡</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h5 class="font-bold text-xl mb-4 text-center">🏛️ 일반 관광자원</h5>
+                        <ul class="list-disc list-inside space-y-2 text-left mx-auto max-w-xs">
+                            <li>근대역사문화거리</li>
+                            <li>초원사진관</li>
+                            <li>히로쓰가옥</li>
+                            <li>군산항</li>
+                            <li>이성당 (건물 자체)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h5 class="font-bold text-xl mb-4 text-center">👥 인적 자원</h5>
+                        <ul class="list-disc list-inside space-y-2 text-left mx-auto max-w-xs">
+                            <li>군산시 관광진흥과</li>
+                            <li>지역 대표 미식업체</li>
+                            <li>군산대학교</li>
+                            <li>청년상인 및 창업센터</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="programs" class="py-20 px-4 bg-teal-50">
+            <div class="container mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-4 text-teal-800">대화형 프로그램 탐색</h3>
+                <p class="text-lg text-center max-w-3xl mx-auto mb-12">
+                    '미미군산'의 핵심은 '미션 수행형 스탬프 투어'입니다. 이 투어는 군산의 맛과 추억을 주제로 한 다양한 체험존으로 구성됩니다. 아래 다이어그램의 각 프로그램을 클릭하여 세부 내용을 확인해 보세요.
+                </p>
+
+                <div class="w-full text-center p-4">
+                    <div class="relative inline-block bg-white p-4 rounded-lg shadow-lg border-2 border-teal-500">
+                        <div class="text-xl font-bold">START: 팝업스토어 입장</div>
+                        <div class="text-sm">(스탬프 투어 리플릿 수령)</div>
+                    </div>
+                    <div class="h-12 w-1 bg-teal-300 mx-auto"></div>
+                    <div class="relative inline-block bg-white p-4 rounded-lg shadow-lg border-2 border-teal-500">
+                        <div class="text-xl font-bold">MISSION: 스탬프 투어</div>
+                        <div class="text-sm">(6개의 체험존)</div>
+                    </div>
+                    <div class="h-12 w-1 bg-teal-300 mx-auto"></div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="hotteok">
+                            <span class="text-2xl">🔥</span>
+                            <h6 class="font-bold mt-2">호떡굽기 체험존</h6>
+                            <p class="text-sm">타이밍 게임</p>
+                        </div>
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="quiz">
+                            <span class="text-2xl">❓</span>
+                            <h6 class="font-bold mt-2">미식 OX퀴즈존</h6>
+                            <p class="text-sm">군산 음식 퀴즈</p>
+                        </div>
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="photo">
+                            <span class="text-2xl">📸</span>
+                            <h6 class="font-bold mt-2">추억사진관</h6>
+                            <p class="text-sm">즉석 사진 인화</p>
+                        </div>
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="poem">
+                            <span class="text-2xl">✍️</span>
+                            <h6 class="font-bold mt-2">N행시 참여존</h6>
+                            <p class="text-sm">창작 참여</p>
+                        </div>
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="mail">
+                            <span class="text-2xl">📮</span>
+                            <h6 class="font-bold mt-2">느린 우편 서비스</h6>
+                            <p class="text-sm">엽서 발송</p>
+                        </div>
+                        <div class="program-node col-span-1 bg-white p-4 rounded-lg shadow-md border border-teal-300" data-target="reward">
+                            <span class="text-2xl">🎁</span>
+                            <h6 class="font-bold mt-2">리워드 부스</h6>
+                            <p class="text-sm">기념품/디저트</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="program-details" class="mt-12 max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-xl min-h-[300px] flex items-center justify-center">
+                    <div id="program-content" class="text-center w-full">
+                        <p class="text-stone-500">위의 프로그램 카드를 클릭하여 상세 설명을 확인하세요.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="impact" class="py-20 px-4">
+            <div class="container mx-auto">
+                <h3 class="text-3xl font-bold text-center mb-12 text-teal-800">프로젝트 기대 효과</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h4 class="text-2xl font-bold mb-4">정량적 목표 성과</h4>
+                        <p class="mb-6">
+                            본 사업은 팝업스토어 운영을 통해 관광객 10,000명 이상 참여 및 SNS 홍보 콘텐츠 1만 회 이상 노출을 1차 목표로 하며, 이후 상설형 미식관광 프로그램으로 발전시킬 기반을 마련하고자 합니다.
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="impactChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="2xl font-bold mb-4">독창성</h4>
+                            <p>군산의 미식자원을 단순한 음식 판매가 아닌 체험형 놀이·문화 콘텐츠로 재구성한 점에서 차별화됩니다. 군산의 맛, 역사, 감성을 '공간'으로 구현하여 세대 간 공감과 추억을 공유하도록 설계한 새로운 형태의 미식관광 콘텐츠입니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="2xl font-bold mb-4">지역경제 기여도</h4>
+                            <p>팝업스토어 방문객 유입은 인근 상권(카페, 식당, 숙박업 등)의 소비 확대로 직접적인 매출 상승을 유도합니다. 또한 지역 미식업체·소상공인과의 협업을 통해 제품 판매, 체험, 굿즈 제작 등 실질적 경제 효과를 창출하며, 지속적인 관광 소비 구조를 만들어내는 파급효과를 기대합니다.</p>
+                        </div>
+                        <div>
+                            <h4 class="2xl font-bold mb-4">실현 및 지속가능성</h4>
+                            <p>군산대 학생 및 청년창업센터와 연계한 운영인력 양성을 통해 매년 반복 개최 및 상설형 미식체험존으로 발전할 수 있는 지속성을 가집니다. 지속적인 SNS 홍보 및 참여형 콘텐츠 갱신으로 계절별 테마 운영도 가능합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800 text-stone-300 p-8 text-center">
+        <p>&copy; 2025 (美味)미미군산 프로젝트. All rights reserved.</p>
+        <p class="text-sm mt-2">본 페이지는 '미미군산 팝업스토어' 사업 계획서를 기반으로 생성된 대화형 웹페이지입니다.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('#mobile-menu a, nav a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.hash !== "") {
+                        e.preventDefault();
+                        const hash = this.hash;
+                        const targetElement = document.querySelector(hash);
+                        if (targetElement) {
+                            const offset = 64; 
+                            const bodyRect = document.body.getBoundingClientRect().top;
+                            const elementRect = targetElement.getBoundingClientRect().top;
+                            const elementPosition = elementRect - bodyRect;
+                            const offsetPosition = elementPosition - offset;
+
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                    if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const quizQuestions = [
+                {
+                    question: '군산 이성당은 대한민국에서 가장 오래된 빵집이다.',
+                    answer: 'X',
+                    explanation: '대한민국에서 가장 오래된 빵집이라는 타이틀은 논란이 있지만, 이성당은 1945년에 문을 열어 현재까지 같은 이름으로 운영되는 **현존하는 가장 오래된 빵집 중 하나**로 유명합니다.'
+                },
+                {
+                    question: '군산의 유명 짬뽕은 해산물 육수에 고춧가루를 넣어 끓인 짙은 붉은색의 매운맛이 특징이다.',
+                    answer: 'X',
+                    explanation: '군산에는 전국적으로 유명한 **하얀 짬뽕(백짬뽕)** 등 기존의 붉은 짬뽕과 차별화되는 독특한 스타일의 짬뽕집이 많습니다. 붉은색 짬뽕 외에도 다양한 형태의 특색 있는 짬뽕이 발달했습니다.'
+                },
+                {
+                    question: '\'불곱창\'은 군산 지역에서 짬뽕, 단팥빵과 함께 손꼽히는 대표적인 미식 자원 중 하나이다.',
+                    answer: 'O',
+                    explanation: '군산의 불곱창(혹은 곱창전골)은 특히 야채와 함께 매콤하게 볶아내는 스타일로, 짬뽕, 단팥빵 못지않게 군산을 대표하는 서민적인 인기 메뉴로 자리 잡았습니다.'
+                },
+                {
+                    question: '군산에서 유명한 호떡은 주로 씨앗이나 꿀만 넣어 만드는 달콤한 호떡이다.',
+                    answer: 'X',
+                    explanation: '군산의 대표 호떡 중 일부는 **잡채호떡, 야채호떡**처럼 속을 달콤한 재료 대신 잡채나 채소로 채워서 든든한 식사 대용으로 즐기는 독특한 형태가 유명합니다.'
+                }
+            ];
+
+
+            const programDetailsData = {
+                hotteok: {
+                    title: '🔥 호떡굽기 체험존: 2~3초 타이밍 챌린지',
+                    desc: `
+                        <div id="hotteok-game-wrapper" class="text-center space-y-6">
+                            <h5 class="text-2xl font-bold text-teal-700">호떡 뒤집기: 2.0초 ~ 3.0초를 잡아라!</h5>
+                            <div class="flex justify-center items-center space-x-4">
+                                <span class="text-4xl">⏱️</span>
+                                <div id="hotteok-timer" class="text-6xl font-mono font-extrabold text-teal-800 bg-teal-100 p-4 rounded-xl shadow-inner border border-teal-300">0.000s</div>
+                            </div>
+                            <p id="hotteok-instructions" class="text-xl font-medium text-stone-700">호떡을 뒤집어 2.0초와 3.0초 사이에 멈추세요! 준비되면 '시작' 버튼을 누르세요.</p>
+                            <div class="space-x-4">
+                                <button id="hotteok-start" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105">시작 (뒤집기)</button>
+                                <button id="hotteok-stop" class="bg-red-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105" disabled>멈춤</button>
+                            </div>
+                            <div id="hotteok-result" class="mt-4 text-2xl font-semibold min-h-[30px] text-stone-800"></div>
+                            <div id="hotteok-success-message" class="hidden p-4 mt-4 bg-lime-100 border-2 border-lime-500 text-lime-800 rounded-xl shadow-md">
+                                🎉 축하합니다! <span class="font-bold">2.0초 ~ 3.0초 내 달성 성공!</span> 리워드 부스에서 스탬프를 받으세요!
+                            </div>
+                        </div>
+                    `
+                },
+                quiz: {
+                    title: '❓ 군산 미식 OX퀴즈존',
+                    desc: `
+                        <div id="quiz-game-wrapper" class="text-center space-y-6">
+                            <h5 class="text-2xl font-bold text-teal-700">군산 미식 OX 퀴즈 챌린지 (총 ${quizQuestions.length}문제)</h5>
+                            <div id="quiz-question-container" class="min-h-[150px] flex flex-col justify-center items-center p-4 bg-teal-50 rounded-lg shadow-inner border border-teal-200">
+                                <p id="quiz-status" class="text-lg font-medium text-teal-600 mb-2">시작 버튼을 눌러주세요.</p>
+                                <p id="quiz-question-text" class="text-xl md:text-2xl font-bold text-stone-800">준비 완료! 군산 미식 퀴즈에 도전하세요!</p>
+                            </div>
+                            <div id="quiz-feedback" class="min-h-[50px] text-lg font-medium text-red-600"></div>
+                            <div id="quiz-buttons" class="space-x-4">
+                                <button id="quiz-start-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105">퀴즈 시작</button>
+                                <button id="quiz-o-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105 hidden" data-answer="O">O</button>
+                                <button id="quiz-x-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105 hidden" data-answer="X">X</button>
+                                <button id="quiz-next-btn" class="bg-stone-400 hover:bg-stone-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-150 transform hover:scale-105 hidden">다음 문제</button>
+                            </div>
+                            <div id="quiz-final-result" class="hidden p-4 mt-4 bg-lime-100 border-2 border-lime-500 text-lime-800 rounded-xl shadow-md">
+                                🎉 챌린지 완료! <span id="quiz-score" class="font-bold text-2xl"></span> 점!
+                            </div>
+                        </div>
+                    `
+                },
+                photo: {
+                    title: '📸 추억사진관',
+                    desc: '초원사진관, 근대역사문화거리 등 군산 명소를 배경으로 한 즉석 사진을 인화합니다. 복고풍 소품을 활용해 특별한 추억을 남길 수 있습니다.'
+                },
+                poem: {
+                    title: '✍️ N행시 참여존',
+                    desc: "'군산', '짬뽕', '이성당' 등 군산 관련 단어로 창의적인 N행시를 짓는 공간입니다. 우수작은 팝업스토어 내에 전시됩니다."
+                },
+                mail: {
+                    title: '📮 느린 우편 서비스',
+                    desc: "군산 여행의 감성을 담은 엽서를 작성하여 '느린 우체통'에 넣으면, 3개월 후에 원하는 주소로 발송해 드리는 아날로그 감성 체험입니다."
+                },
+                reward: {
+                    title: '🎁 리워드 부스',
+                    desc: '스탬프 투어 미션을 완료한 참가자에게 스탬프 개수별로 군산 기념품 또는 이성당과 협업한 특별 디저트를 리워드로 제공합니다.'
+                }
+            };
+
+            let activeNode = null;
+            const programNodes = document.querySelectorAll('.program-node');
+            const detailContent = document.getElementById('program-content');
+
+            programNodes.forEach(node => {
+                node.addEventListener('click', () => {
+                    const targetKey = node.dataset.target;
+                    const data = programDetailsData[targetKey];
+
+                    if (activeNode) {
+                        activeNode.classList.remove('active');
+                    }
+                    node.classList.add('active');
+                    activeNode = node;
+
+                    detailContent.innerHTML = data.desc;
+
+                    if (targetKey === 'hotteok') {
+                        let startTime = null;
+                        let timerInterval = null;
+                        const MIN_SUCCESS_MS = 2000;
+                        const MAX_SUCCESS_MS = 3000;
+
+                        const startButton = document.getElementById('hotteok-start');
+                        const stopButton = document.getElementById('hotteok-stop');
+                        const resultDiv = document.getElementById('hotteok-result');
+                        const successMessage = document.getElementById('hotteok-success-message');
+                        const instructions = document.getElementById('hotteok-instructions');
+                        const timerDisplay = document.getElementById('hotteok-timer');
+                        
+                        const updateTimerDisplay = (elapsed) => {
+                            if (timerDisplay) {
+                                const seconds = (elapsed / 1000).toFixed(3);
+                                timerDisplay.textContent = `${seconds}s`;
+                            }
+                        };
+
+                        const resetGame = () => {
+                            startTime = null;
+                            clearInterval(timerInterval);
+                            updateTimerDisplay(0);
+                            startButton.disabled = false;
+                            stopButton.disabled = true;
+                            resultDiv.textContent = '';
+                            successMessage.classList.add('hidden');
+                            instructions.textContent = '호떡을 뒤집어 2.0초와 3.0초 사이에 멈추세요! 준비되면 \'시작\' 버튼을 누르세요.';
+                            stopButton.classList.remove('bg-red-600', 'animate-pulse');
+                            stopButton.classList.add('bg-red-500'); 
+                            const oldResetBtn = document.getElementById('hotteok-reset-btn');
+                            if (oldResetBtn) { oldResetBtn.remove(); }
+                        };
+
+                        const startGame = () => {
+                            resetGame();
+                            
+                            startButton.disabled = true;
+                            stopButton.disabled = false;
+                            stopButton.classList.remove('bg-red-500'); 
+                            stopButton.classList.add('bg-red-600', 'animate-pulse'); 
+
+                            startTime = Date.now();
+                            instructions.textContent = '2.0초 ~ 3.0초 사이에 \'멈춤\' 버튼을 누르세요!';
+
+                            timerInterval = setInterval(() => {
+                                const elapsed = Date.now() - startTime;
+                                updateTimerDisplay(elapsed);
+                            }, 10);
+                        };
+
+                        const stopGame = () => {
+                            clearInterval(timerInterval);
+                            const stopTime = Date.now();
+                            
+                            stopButton.disabled = true;
+                            stopButton.classList.remove('bg-red-600', 'animate-pulse');
+                            stopButton.classList.add('bg-red-500'); 
+
+                            if (startTime === null) {
+                                resultDiv.textContent = '오류: 시작 버튼을 먼저 눌러주세요.';
+                                return;
+                            }
+
+                            const elapsedTime = stopTime - startTime;
+                            updateTimerDisplay(elapsedTime);
+
+                            const isSuccess = elapsedTime >= MIN_SUCCESS_MS && elapsedTime <= MAX_SUCCESS_MS;
+                            
+                            if (isSuccess) {
+                                resultDiv.classList.remove('text-red-600');
+                                resultDiv.classList.add('text-green-600');
+                                resultDiv.textContent = `성공! 기록: ${(elapsedTime / 1000).toFixed(3)}s.`;
+                                successMessage.classList.remove('hidden');
+                                instructions.textContent = '호떡의 황금 타이밍을 잡으셨습니다!';
+                            } else {
+                                resultDiv.classList.remove('text-green-600');
+                                resultDiv.classList.add('text-red-600');
+                                
+                                let message = '';
+                                if (elapsedTime < MIN_SUCCESS_MS) {
+                                    message = '너무 빨랐습니다! (2.0초 미만)';
+                                } else {
+                                    message = '너무 늦었습니다! (3.0초 초과)';
+                                }
+                                
+                                resultDiv.textContent = `실패! 기록: ${(elapsedTime / 1000).toFixed(3)}s. ${message}`;
+                                instructions.textContent = '다시 도전해서 스탬프를 획득하세요!';
+                                
+                                const oldResetBtn = document.getElementById('hotteok-reset-btn');
+                                if (!oldResetBtn) {
+                                    resultDiv.insertAdjacentHTML('afterend', `<button id="hotteok-reset-btn" class="bg-stone-400 hover:bg-stone-500 text-white font-bold py-2 px-6 rounded-lg transition duration-150 mt-4">다시 도전</button>`);
+                                    document.getElementById('hotteok-reset-btn').addEventListener('click', resetGame);
+                                }
+                            }
+                        };
+
+                        startButton.addEventListener('click', startGame);
+                        stopButton.addEventListener('click', stopGame);
+                        resetGame();
+                        
+                    } else if (targetKey === 'quiz') {
+                        let currentQuestionIndex = 0;
+                        let score = 0;
+                        let isAnswered = false;
+
+                        const startBtn = document.getElementById('quiz-start-btn');
+                        const oBtn = document.getElementById('quiz-o-btn');
+                        const xBtn = document.getElementById('quiz-x-btn');
+                        const nextBtn = document.getElementById('quiz-next-btn');
+                        const statusText = document.getElementById('quiz-status');
+                        const questionText = document.getElementById('quiz-question-text');
+                        const feedbackDiv = document.getElementById('quiz-feedback');
+                        const finalResultDiv = document.getElementById('quiz-final-result');
+                        const scoreSpan = document.getElementById('quiz-score');
+
+                        const showButtons = (showO, showX, showStart, showNext) => {
+                            oBtn.classList.toggle('hidden', !showO);
+                            xBtn.classList.toggle('hidden', !showX);
+                            startBtn.classList.toggle('hidden', !showStart);
+                            nextBtn.classList.toggle('hidden', !showNext);
+                        };
+                        
+                        const updateQuizDisplay = () => {
+                            if (currentQuestionIndex < quizQuestions.length) {
+                                const q = quizQuestions[currentQuestionIndex];
+                                statusText.textContent = `문제 ${currentQuestionIndex + 1} / ${quizQuestions.length} | 현재 점수: ${score}점`;
+                                questionText.textContent = q.question;
+                                feedbackDiv.innerHTML = '';
+                                showButtons(true, true, false, false);
+                                isAnswered = false;
+                            } else {
+                                // 퀴즈 종료
+                                statusText.textContent = '미션 완료!';
+                                questionText.textContent = '🎉 모든 퀴즈를 완료하셨습니다!';
+                                scoreSpan.textContent = `${score} / ${quizQuestions.length}`;
+                                feedbackDiv.innerHTML = score >= 3 ? 
+                                    `<span class="text-lime-600 font-bold">합격!</span> 리워드 부스에서 스탬프를 받으세요!` : 
+                                    `<span class="text-red-600 font-bold">불합격.</span> 아쉽지만 다음에 다시 도전해 주세요!`;
+                                finalResultDiv.classList.remove('hidden');
+                                showButtons(false, false, true, false); // 시작 버튼 재활성화 (재도전)
+                                startBtn.textContent = '다시 도전';
+                            }
+                        };
+
+                        const handleAnswer = (userAnswer) => {
+                            if (isAnswered) return;
+                            isAnswered = true;
+                            
+                            const q = quizQuestions[currentQuestionIndex];
+                            const isCorrect = (userAnswer === q.answer);
+                            
+                            showButtons(false, false, false, true);
+
+                            if (isCorrect) {
+                                score += 1;
+                                feedbackDiv.classList.remove('text-red-600');
+                                feedbackDiv.classList.add('text-lime-600');
+                                feedbackDiv.innerHTML = `✅ **정답입니다!**`;
+                                nextBtn.classList.remove('bg-stone-400');
+                                nextBtn.classList.add('bg-teal-500');
+                                nextBtn.textContent = '다음 문제로';
+                                
+                                setTimeout(() => {
+                                    currentQuestionIndex++;
+                                    updateQuizDisplay();
+                                }, 1500); 
+
+                            } else {
+                                feedbackDiv.classList.remove('text-lime-600');
+                                feedbackDiv.classList.add('text-red-600');
+                                feedbackDiv.innerHTML = `❌ **오답입니다!** (정답: ${q.answer})<br><span class="text-sm font-normal text-stone-700">${q.explanation}</span>`;
+                                nextBtn.classList.remove('bg-teal-500');
+                                nextBtn.classList.add('bg-stone-400');
+                                nextBtn.textContent = '다음 문제 보기';
+                                
+                                nextBtn.addEventListener('click', function transitionToNext() {
+                                    currentQuestionIndex++;
+                                    updateQuizDisplay();
+                                    nextBtn.removeEventListener('click', transitionToNext);
+                                }, { once: true });
+                            }
+                            
+                            statusText.textContent = `문제 ${currentQuestionIndex + 1} / ${quizQuestions.length} | 현재 점수: ${score}점`;
+
+                            
+                        };
+                        
+                        const initQuizListeners = () => {
+                            startBtn.removeEventListener('click', startGame);
+                            oBtn.removeEventListener('click', () => handleAnswer('O'));
+                            xBtn.removeEventListener('click', () => handleAnswer('X'));
+
+                            startBtn.addEventListener('click', startGame);
+                            oBtn.addEventListener('click', () => handleAnswer('O'));
+                            xBtn.addEventListener('click', () => handleAnswer('X'));
+                        };
+
+                        const startGame = () => {
+                            currentQuestionIndex = 0;
+                            score = 0;
+                            finalResultDiv.classList.add('hidden');
+                            updateQuizDisplay();
+                        };
+                        
+                        initQuizListeners();
+
+
+                    } else {
+                        detailContent.innerHTML = `
+                            <h5 class="text-2xl font-bold mb-3 text-teal-700">${data.title}</h5>
+                            <p class="text-lg">${data.desc}</p>
+                        `;
+                    }
+                });
+            });
+
+            
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            const impactChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['관광객 참여 (명)', 'SNS 홍보 노출 (회)'],
+                    datasets: [{
+                        label: '목표 수치',
+                        data: [10000, 10000],
+                        backgroundColor: [
+                            'rgba(15, 118, 110, 0.6)', 
+                            'rgba(13, 148, 136, 0.6)'  
+                        ],
+                        borderColor: [
+                            'rgb(15, 118, 110)',
+                            'rgb(13, 148, 136)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString() + '회/명';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toLocaleString() + ' (명/회)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
